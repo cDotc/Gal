@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4f8fc">
+<title>Frame Gallery</title>
+<style>
+:root{--ink:#172b42;--muted:#71849a;--line:#e5edf5;--blue:#397fe8;--mint:#dff8f0;--bg:#f4f8fc}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 8% 0%,#e5f5ff 0,transparent 30%),radial-gradient(circle at 95% 12%,#e4fbf3 0,transparent 27%),var(--bg);color:var(--ink);font-family:Inter,"Noto Sans Bengali",system-ui,-apple-system,sans-serif;min-height:100vh}
+.shell{max-width:1100px;margin:auto;padding:30px 22px 46px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:15px;background:linear-gradient(145deg,#d8f4ff,#dff9ed);display:grid;place-items:center;color:#2876b9;font-size:22px;box-shadow:inset 0 0 0 1px #fff}
+.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7890a7;font-weight:800}
+h1{font-size:22px;margin:2px 0 0;letter-spacing:-.5px}
+.add{border:0;width:48px;height:48px;border-radius:50%;background:linear-gradient(145deg,#4c91f4,#3474df);color:#fff;font-size:30px;line-height:1;cursor:pointer;box-shadow:0 8px 20px #397fe83b;transition:.2s}
+.add:hover{transform:translateY(-2px);box-shadow:0 11px 24px #397fe84d}
+.hero{margin:34px 0 26px;padding:25px 27px;border:1px solid #ffffffd9;border-radius:25px;background:linear-gradient(115deg,#ffffffdc,#f0fbf8e8);box-shadow:0 12px 35px #45627c0c;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-45px;top:-90px;background:#d9f4ee88}
+.hero h2{font-size:clamp(23px,4vw,32px);margin:0 0 8px;letter-spacing:-.8px}
+.hero p{margin:0;color:var(--muted);font-size:14px;line-height:1.7;max-width:570px}
+.stats{display:flex;gap:9px;margin-top:19px;flex-wrap:wrap}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;color:#657b91;font-size:12px}
+.stat b{color:#203a55;font-size:14px;margin-right:4px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 2px 14px}
+.section-head h3{font-size:17px;margin:0}
+.section-head span{font-size:12px;color:var(--muted)}
+.gallery{display:flex;gap:16px;overflow-x:auto;padding:3px 2px 19px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#c9d9e8 transparent}
+.tile{flex:0 0 220px;scroll-snap-align:start;border:1px solid #e6edf4;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 8px 22px #2d4b670c;transition:transform .2s,box-shadow .2s}
+.tile:hover{transform:translateY(-3px);box-shadow:0 13px 28px #2d4b6717}
+.preview{height:170px;background:linear-gradient(135deg,#eef5fb,#e5f7f1);display:grid;place-items:center;position:relative;overflow:hidden}
+.preview img{width:100%;height:100%;object-fit:cover;display:block}
+.placeholder{text-align:center;color:#8ca0b3;padding:15px}
+.placeholder .symbol{font-size:32px;display:block;margin-bottom:8px;color:#6f9ec5}
+.placeholder small{font-size:11px;line-height:1.5;display:block}
+.tile-info{padding:13px 14px 14px}
+.tile-name{font-size:14px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile-time{font-size:11px;color:#8496a8;margin-top:5px}
+.status{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:750;color:#278b6d;background:#e9f8f2;border-radius:20px;padding:5px 8px;margin-top:10px}
+.status.pending{color:#a77827;background:#fff6e3}
+.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.empty{border:1px dashed #cbd9e6;border-radius:20px;padding:36px 18px;text-align:center;color:#8295a8;background:#ffffff80}
+.empty .symbol{font-size:34px;margin-bottom:8px}
+.empty strong{display:block;color:#456078;font-size:14px;margin-bottom:5px}
+.empty p{font-size:12px;margin:0}
+.hint{margin-top:19px;padding:14px 16px;border-radius:15px;background:#edf5fc;color:#71869a;font-size:12px;line-height:1.7}
+.hint b{color:#45627d}
+.modal-wrap{position:fixed;inset:0;background:#152b4266;backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:18px;z-index:5}
+.modal-wrap.show{display:flex}
+.modal{width:min(100%,410px);background:#fff;border-radius:24px;padding:24px;box-shadow:0 25px 70px #102b4533;animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.modal h3{margin:0;font-size:19px}
+.close{border:0;background:#f0f4f8;width:32px;height:32px;border-radius:50%;font-size:19px;color:#60758a;cursor:pointer}
+.modal p{font-size:12px;color:#7a8da1;line-height:1.6;margin:7px 0 18px}
+label{font-size:12px;font-weight:700;color:#4b647d;display:block;margin-bottom:7px}
+input{width:100%;border:1px solid #dce6ef;border-radius:12px;padding:13px 14px;font:inherit;font-size:14px;outline:none;color:var(--ink)}
+input:focus{border-color:#79aaf0;box-shadow:0 0 0 3px #397fe817}
+.actions{display:flex;gap:9px;margin-top:19px}
+.actions button{flex:1;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:700;cursor:pointer}
+.cancel{background:#f0f4f8;color:#61768b}
+.confirm{background:#397fe8;color:white;box-shadow:0 6px 15px #397fe82b}
+.note{font-size:10px;color:#91a0af;margin-top:12px}
+@media(max-width:600px){.shell{padding:22px 16px 35px}.hero{margin-top:26px;padding:21px}.tile{flex-basis:190px}.preview{height:155px}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div class="brand"><div class="logo">▧</div><div><div class="eyebrow">YOUR PERSONAL SPACE</div><h1>Frame Gallery</h1></div></div>
+    <button class="add" id="openModal" aria-label="Add image" title="নতুন ছবি যোগ করুন">+</button>
+  </header>
+  <section class="hero">
+    <h2>Moments, in frames.</h2>
+    <p>তোমার ছবিগুলো এক জায়গায়, সুন্দরভাবে সাজানো। নাম যোগ করো, একই নামে ছবি ফোল্ডারে রাখো—প্রিভিউ এখানে দেখা যাবে।</p>
+    <div class="stats">
+      <div class="stat"><b id="totalCount">0</b>টি ফ্রেম</div>
+      <div class="stat"><b id="readyCount">0</b>টি ছবি পাওয়া গেছে</div>
+    </div>
+  </section>
+  <div class="section-head"><h3>Recently added</h3><span>হরিজন্টালি স্ক্রল করো →</span></div>
+  <section class="gallery" id="gallery" aria-label="Image gallery"></section>
+  <div class="hint"><b>ছবি যোগ করার নিয়ম:</b> + চাপ দিয়ে ছবির নাম লিখে Add করো। এরপর সেই নামেই ছবিটি HTML ফাইলের একই ফোল্ডারে রাখবে—যেমন <b>Sunset.jpg</b>। পেজ রিফ্রেশ করলে ছবিটি নিজে থেকেই দেখাবে।</div>
+</main>
+
+<div class="modal-wrap" id="modalWrap">
+  <form class="modal" id="addForm">
+    <div class="modal-top"><h3>নতুন ফ্রেম যোগ করো</h3><button type="button" class="close" id="closeModal" aria-label="Close">×</button></div>
+    <p>ছবির ফাইলের নামের সঙ্গে মিল রেখে একটি নাম দাও। এক্সটেনশন (.jpg/.png) লিখতে হবে না।</p>
+    <label for="imageName">ছবির নাম</label>
+    <input id="imageName" type="text" placeholder="যেমন: Sunset" maxlength="80" autocomplete="off" required>
+    <div class="note">ফাইলের নাম ও এখানে দেওয়া নাম একই হতে হবে।</div>
+    <div class="actions"><button type="button" class="cancel" id="cancelBtn">Cancel</button><button type="submit" class="confirm">Add frame</button></div>
+  </form>
+</div>
+<script>
+(() => {
+  const STORAGE_KEY = "frame-gallery-items-v1";
+  const extensions = ["jpg","jpeg","png","webp","gif","avif","JPG","JPEG","PNG","WEBP"];
+  const gallery = document.getElementById("gallery");
+  const modal = document.getElementById("modalWrap");
+  const input = document.getElementById("imageName");
+  let items = [];
+  try { items = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); if (!Array.isArray(items)) items = []; }
+  catch (_) { items = []; }
+
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  const formatDate = value => {
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return "সময় পাওয়া যায়নি";
+    return d.toLocaleString("bn-BD", {day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"});
+  };
+  const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch (_) {} };
+
+  function render() {
+    gallery.innerHTML = "";
+    let ready = 0;
+    if (!items.length) {
+      gallery.innerHTML = '<div class="empty" style="width:100%"><div class="symbol">▧</div><strong>এখনো কোনো ফ্রেম যোগ করা হয়নি</strong><p>উপরের + বাটনে চাপ দিয়ে প্রথম ছবির নাম যোগ করো</p></div>';
+    }
+    [...items].sort((a,b) => b.createdAt-a.createdAt).forEach(item => {
+      const tile = document.createElement("article");
+      tile.className = "tile";
+      const name = escapeHTML(item.name);
+      tile.innerHTML = `<div class="preview"><div class="placeholder"><span class="symbol">▧</span><small>ছবি খোঁজা হচ্ছে…</small></div></div><div class="tile-info"><div class="tile-name" title="${name}">${name}</div><div class="tile-time">${formatDate(item.createdAt)}</div><span class="status pending">ছবি খুঁজে পাওয়া যায়নি</span></div>`;
+      const preview = tile.querySelector(".preview");
+      const status = tile.querySelector(".status");
+      let index = 0;
+      const tryNext = () => {
+        if (index >= extensions.length) return;
+        const src = encodeURIComponent(item.name) + "." + extensions[index++];
+        const img = new Image();
+        img.onload = () => {
+          preview.innerHTML = "";
+          img.alt = item.name;
+          preview.appendChild(img);
+          status.className = "status";
+          status.textContent = "ছবি পাওয়া গেছে";
+          ready++;
+          document.getElementById("readyCount").textContent = ready;
+        };
+        img.onerror = tryNext;
+        img.src = src;
+      };
+      tryNext();
+      gallery.appendChild(tile);
+    });
+    document.getElementById("totalCount").textContent = items.length;
+    document.getElementById("readyCount").textContent = ready;
+  }
+
+  function open() { modal.classList.add("show"); setTimeout(() => input.focus(), 80); }
+  function close() { modal.classList.remove("show"); input.value = ""; }
+  document.getElementById("openModal").addEventListener("click", open);
+  document.getElementById("closeModal").addEventListener("click", close);
+  document.getElementById("cancelBtn").addEventListener("click", close);
+  modal.addEventListener("click", e => { if (e.target === modal) close(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+  document.getElementById("addForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = input.value.trim().replace(/\.(jpg|jpeg|png|webp|gif|avif)$/i, "");
+    if (!name) return;
+    if (items.some(item => item.name.toLowerCase() === name.toLowerCase())) {
+      alert("এই নামের ফ্রেম আগে থেকেই যোগ করা আছে।");
+      return;
+    }
+    items.push({name, createdAt: Date.now()});
+    save();
+    close();
+    render();
+    gallery.scrollTo({left:0, behavior:"smooth"});
+  });
+  render();
+})();
+</script>
+</body>
+</html>
